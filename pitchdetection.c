@@ -79,6 +79,8 @@ int main(int argc, char **argv){
     memset(pitches, 0, numframes*sizeof(int));
 
 
+    // pitch_detect(&(buf[framesize*400]), framesize, samplerate);
+
     /* Go through each frame, find fundamental frequency */
     int remaining_samples = num_samples;
     for(i = 0; i < numframes; i++){
@@ -86,11 +88,12 @@ int main(int argc, char **argv){
         if(remaining_samples < framesize){
             length = remaining_samples;
         }
-        pitches[i] = autocorrelation(&(buf[framesize*i]), length, samplerate);
+        pitches[i] = pitch_detect(&(buf[framesize*i]), length, samplerate);
 
         remaining_samples -= length;
     }
 
+    /* Write Output file */
     FILE * pitch_output;
     pitch_output = fopen("pitch_output.out","w");
     for (i = 0; i < numframes; i ++){
