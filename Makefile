@@ -1,7 +1,7 @@
 #
 # 'make depend' uses makedepend to automatically generate dependencies
 #               (dependencies are added to end of Makefile)
-# 'make'        build executable file 'mycc'
+# 'make'        build executable file 'pitchdetection'
 # 'make clean'  removes all .o and executable files
 #
 
@@ -156,7 +156,8 @@ autocorrelation.o: /usr/include/sys/_types/_ct_rune_t.h
 autocorrelation.o: /usr/include/sys/_types/_rune_t.h
 autocorrelation.o: /usr/include/sys/_types/_wchar_t.h /usr/include/string.h
 autocorrelation.o: /usr/include/strings.h /usr/include/secure/_string.h
-autocorrelation.o: /usr/include/math.h
+autocorrelation.o: /usr/include/tgmath.h /usr/include/math.h
+autocorrelation.o: /usr/include/complex.h
 pitchdetection.o: /usr/local/include/sndfile.h /usr/include/stdio.h
 pitchdetection.o: /usr/include/sys/cdefs.h
 pitchdetection.o: /usr/include/sys/_symbol_aliasing.h
@@ -243,4 +244,5 @@ pitchdetection.o: /usr/include/sys/_types/_ct_rune_t.h
 pitchdetection.o: /usr/include/sys/_types/_rune_t.h
 pitchdetection.o: /usr/include/sys/_types/_wchar_t.h /usr/include/string.h
 pitchdetection.o: /usr/include/strings.h /usr/include/secure/_string.h
-pitchdetection.o: /usr/include/math.h autocorrelation.h
+pitchdetection.o: /usr/include/math.h autocorrelation.h /usr/include/tgmath.h
+pitchdetection.o: /usr/include/complex.h

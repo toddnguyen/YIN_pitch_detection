@@ -8,13 +8,13 @@
 
 int main(int argc, char **argv){
 
-    if (argc != 2)
-	{	//puts ("\nEncode a single input file into a number of different output ") ;
-		//puts ("encodings. These output encodings can then be moved to another ") ;
-		//puts ("OS for testing.\n") ;
-		puts ("    Usage : ./autocorrelation <filename>.wav\n") ;
-		exit (1) ;
-	} ;
+    if (argc != 2){
+        //puts ("\nEncode a single input file into a number of different output ") ;
+        //puts ("encodings. These output encodings can then be moved to another ") ;
+        //puts ("OS for testing.\n") ;
+        puts ("    Usage : ./autocorrelation <Sound File>\n") ;
+        exit (1) ;
+    } ;
 
     SNDFILE *sf;
     SF_INFO info;
@@ -22,6 +22,7 @@ int main(int argc, char **argv){
     int *buf;
     int num_samples,samplerate,c;
     int i,j;
+    int format;
     FILE *out;
 
     /* Open the WAV file. */
@@ -30,8 +31,8 @@ int main(int argc, char **argv){
     sf = sf_open(argv[1],SFM_READ,&info);
 
     if (sf == NULL){
-    printf("Failed to open the file.\n");
-    exit(-1);
+        printf("Failed to open the file.\n");
+        exit(-1);
     }
 
 
@@ -39,6 +40,22 @@ int main(int argc, char **argv){
     num_samples = info.frames;
     samplerate = info.samplerate;
     c = info.channels;
+    format = info.format;
+
+    switch(format & 0x0F0000){
+        case SF_FORMAT_WAV:
+        printf("File is .wav\n");
+        break;
+
+        case SF_FORMAT_AU:
+        printf("File is .snd\n");
+        break;
+
+        default:
+        printf("Not a valid sound file type\n");
+        exit(1);
+    }
+
     printf("# of samples = %d\n",num_samples);
     printf("samplerate = %d\n",samplerate);
     printf("channels = %d\n",c);
