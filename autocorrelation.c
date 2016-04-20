@@ -3,32 +3,32 @@
 #define TRESHOLD 0.1
 
 double pitch_detect(int * frame, int length, int samplerate){
+
+    int W = length;
+    int i,t,j;
+
+
     /** Step 0: Detect silence **/
 
 
-
-
     /** Step 1: Autocorrelate **/
-    long * acf = (long *) malloc(length*sizeof(long));
-    memset(acf, 0, length*sizeof(long));
-
-    int W = length;
-
-    int i,t,j;
-    for(t = 0; t < length; t++){
-        for(j = 1; j < W-t; j++){
-            acf[t] += (long)frame[j]*frame[j+t];
-            // printf("%ld\n", (long)frame[j]*frame[j+t]);
-        }
-    }
-
-    int maxima = W-1;
-    //Find largest Local Maxima
-    for(i = 1; i < W-1; i++){
-        if(acf[i] >= fmax(acf[i-1], acf[i+1]) && acf[i] > acf[maxima]){
-            maxima = i;
-        }
-    }
+    // long * acf = (long *) malloc(length*sizeof(long));
+    // memset(acf, 0, length*sizeof(long));
+    //
+    // for(t = 0; t < length; t++){
+    //     for(j = 1; j < W-t; j++){
+    //         acf[t] += (long)frame[j]*frame[j+t];
+    //         // printf("%ld\n", (long)frame[j]*frame[j+t]);
+    //     }
+    // }
+    //
+    // int maxima = W-1;
+    // //Find largest Local Maxima
+    // for(i = 1; i < W-1; i++){
+    //     if(acf[i] >= fmax(acf[i-1], acf[i+1]) && acf[i] > acf[maxima]){
+    //         maxima = i;
+    //     }
+    // }
 
     // FILE * acf_output;
     // acf_output = fopen("acf_output.out","w");
@@ -64,7 +64,13 @@ double pitch_detect(int * frame, int length, int samplerate){
                 denominator += difference[j];
             }
             denominator /= t;
-            cmndifference[t] = difference[t]/denominator;
+            if(denominator != 0){
+                cmndifference[t] = difference[t]/denominator;
+            }
+            else{
+                cmndifference[t] = 1;
+            }
+
         }
     }
 
@@ -79,12 +85,9 @@ double pitch_detect(int * frame, int length, int samplerate){
         }
     }
 
-    free(acf);
+    // free(acf);
     free(difference);
     free(cmndifference);
 
-
-    //lags/samplingrate = seconds * lags
-    //return samplerate/maxima;
     return samplerate/minima;
 }

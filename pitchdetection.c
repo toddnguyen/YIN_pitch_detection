@@ -5,14 +5,13 @@
 #include <string.h>
 #include <math.h>
 #include "autocorrelation.h"
+#include "header.h"
 
 int main(int argc, char **argv){
 
     if (argc != 2){
-        //puts ("\nEncode a single input file into a number of different output ") ;
-        //puts ("encodings. These output encodings can then be moved to another ") ;
-        //puts ("OS for testing.\n") ;
-        puts ("    Usage : ./autocorrelation <Sound File>\n") ;
+        puts ("    Usage : ./pitchdetection <Sound File>");
+        puts ("    <Sound File> should be a mono audio file in format .snd or .wav\n");
         exit (1) ;
     } ;
 
@@ -21,9 +20,8 @@ int main(int argc, char **argv){
     int num, num_items;
     int *buf;
     int num_samples,samplerate,c;
-    int i,j;
+    int i;
     int format;
-    FILE *out;
 
     /* Open the WAV file. */
     info.format = 0;
@@ -44,15 +42,20 @@ int main(int argc, char **argv){
 
     switch(format & 0x0F0000){
         case SF_FORMAT_WAV:
-        printf("File is .wav\n");
+        printf("Filetype: wav\n");
         break;
 
         case SF_FORMAT_AU:
-        printf("File is .snd\n");
+        printf("Filetype: snd\n");
         break;
 
         default:
-        printf("Not a valid sound file type\n");
+        printf("Not a valid sound file type (use .wav or .snd)\n");
+        exit(1);
+    }
+
+    if(c != 1){
+        printf("Not valid sound file. Please use mono files only.\n");
         exit(1);
     }
 
@@ -68,25 +71,9 @@ int main(int argc, char **argv){
     printf("Read %d items\n",num);
 
 
-    /* Write the data to filedata.out. */
-    out = fopen("filedata.out","w");
-    for (i = 0; i < num; i += c){
-        for (j = 0; j < c; ++j){
-            fprintf(out,"%d ",buf[i+j]);
-        }
-        fprintf(out,"\n");
-    }
-    fclose(out);
-
-
     /* Set framesize to 6ms */
     int framesize = 0.006*samplerate;
     printf("Frame Size= %d Samples\n",framesize);
-
-
-    /* Allocate buffer to hold frame of samples and pitches */
-    int * frame = (int *) malloc(framesize*sizeof(int));
-    memset(frame, 0, framesize*sizeof(int));
 
 
     /* Allocate buffer to hold pitches for each frame */
@@ -96,11 +83,9 @@ int main(int argc, char **argv){
     memset(pitches, 0, numframes*sizeof(int));
 
 
-    // pitch_detect(&(buf[framesize*400]), framesize, samplerate);
-
     /* Go through each frame, find fundamental frequency */
     int remaining_samples = num_samples;
-    for(i = 0; i < numframes; i++){
+    for(i = 0; i < numframes-2; i++){
         int length = framesize;
         if(remaining_samples < framesize){
             length = remaining_samples;
@@ -109,6 +94,7 @@ int main(int argc, char **argv){
 
         remaining_samples -= length;
     }
+
 
     /* Write Output file */
     FILE * pitch_output;
@@ -119,8 +105,8 @@ int main(int argc, char **argv){
     }
     fclose(pitch_output);
 
+
     free(buf);
-    free(frame);
     free(pitches);
 
     return 0;
