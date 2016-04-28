@@ -1,6 +1,7 @@
 #include "autocorrelation.h"
 
 #define TRESHOLD 0.1
+#define SILENCE 10000000
 
 double pitch_detect(int * frame, int length, int samplerate){
 
@@ -9,9 +10,18 @@ double pitch_detect(int * frame, int length, int samplerate){
 
 
     /** Step 0: Detect silence **/
+    int silence = 0;
+    for(i = 0; i < length; i++){
+        if(abs(frame[i]) >= SILENCE){
+            silence = 1;
+        }
+    }
+    if(silence == 0){
+        return 0;
+    }
 
+    /** Step 1: Autocorrelate (Not needed due to difference function) **/
 
-    /** Step 1: Autocorrelate **/
     // long * acf = (long *) malloc(length*sizeof(long));
     // memset(acf, 0, length*sizeof(long));
     //
@@ -89,5 +99,5 @@ double pitch_detect(int * frame, int length, int samplerate){
     free(difference);
     free(cmndifference);
 
-    return samplerate/minima;
+    return (double)samplerate/minima;
 }

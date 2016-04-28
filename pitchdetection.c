@@ -17,11 +17,35 @@ int main(int argc, char **argv){
 
     SNDFILE *sf;
     SF_INFO info;
+    HEADER ffheader;
     int num, num_items;
     int *buf;
     int num_samples,samplerate,c;
     int i;
     int format;
+
+    /* Fill in header */
+    char *performer = "test";     /* name of performer                        */
+    char *instrument = "instrument";    /* instrument used                          */
+    char *date = "date";          /* date of recording                        */
+    char *pitch = "pitch";         /* pitch played                             */
+    char *dyn = "f";           /* dynamic level                            */
+    char *vibra = "NO";         /* vibrato (YES/NO)                         */
+    char *part = "all";          /* portion of tone (beg., middle, end, all) */
+    char *type = "full";          /* "full" or "compressed" data format       */
+    char *comments = "";      /* additional comments                      */
+    char *andate = "Jan";        /* date of analysis, if analysis file       */
+    float  interpval;     /* analysis reinterp. factor                */
+    float  sr;            /* signal sample rate                       */
+    float  tl;            /* tone length, seconds                     */
+    float  smax;          /* max. amplitude of input signal           */
+    float  fa;            /* fundamental freq. assumed in analysis    */
+    float  dt;            /* time between analysis blocks, seconds    */
+    int  fftlen;        /* analysis block size                      */
+    int  nhar;          /* number of harmonics                      */
+    int  nchans;        /* number of channels recorded              */
+    int  npts;          /* number of analysis blocks                */
+
 
     /* Open the WAV file. */
     info.format = 0;
@@ -79,8 +103,8 @@ int main(int argc, char **argv){
     /* Allocate buffer to hold pitches for each frame */
     int numframes = ceil((double)num_samples/framesize);
     printf("Number of frames = %d\n",numframes);
-    int * pitches = (int *) malloc(numframes*sizeof(int));
-    memset(pitches, 0, numframes*sizeof(int));
+    float * pitches = (float *) malloc(numframes*sizeof(float));
+    memset(pitches, 0, numframes*sizeof(float));
 
 
     /* Go through each frame, find fundamental frequency */
@@ -100,7 +124,7 @@ int main(int argc, char **argv){
     FILE * pitch_output;
     pitch_output = fopen("pitch_output.out","w");
     for (i = 0; i < numframes; i ++){
-        fprintf(pitch_output,"%d ",pitches[i]);
+        fprintf(pitch_output,"%f ",pitches[i]);
         fprintf(pitch_output,"\n");
     }
     fclose(pitch_output);
