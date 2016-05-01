@@ -1,23 +1,23 @@
-/****************************************************************************** 
+/******************************************************************************
  *		header.c	Latest edit: 03/10/98
  *
- *  Functions to read and write header    
- *    data for analysis files            
- *                                      
- *  Original programmer: Robert C. Maher    April, 1987            
- *                                    
- *    use:                           
- *           HEADER headptr;        
- *              int fd;            
- *                                
- *        fd = open("file",0);   
- *          --or--                 
- *        fd = creat("file",0644);
- *                               
- *     rdat(fd,&headptr);       
- *     wdat(fd,&headptr);      
+ *  Functions to read and write header
+ *    data for analysis files
  *
- *   Changes:                        
+ *  Original programmer: Robert C. Maher    April, 1987
+ *
+ *    use:
+ *           HEADER headptr;
+ *              int fd;
+ *
+ *        fd = open("file",0);
+ *          --or--
+ *        fd = creat("file",0644);
+ *
+ *     rdat(fd,&headptr);
+ *     wdat(fd,&headptr);
+ *
+ *   Changes:
  *	02/19/91 jwb	On NeXT: eliminated calloc() declaration.
  *	08/12/94 jwb	For DEC Alpha: insert byte swapping code.
  *	11/05/95 jwb	Insert code to make sure header is of correct length.
@@ -44,7 +44,7 @@ void rdat(int fd,HEADER *head_data) 			    /* jwb 11/05/95 */
 {
   int i, *data;						    /* jwb 08/12/94 */
   int nobytes;						    /* jwb 11/05/95 */
-  
+
   if((nobytes = lseek(fd, 0L, 2)) < 10*sizeof(int))	    /* jwb 09/24/96 */
   {
     P("Analysis file header is invalid. Abort\n");	    /* jwb 09/24/96 */
@@ -77,7 +77,7 @@ void rdat(int fd,HEADER *head_data) 			    /* jwb 11/05/95 */
   }
   /* If the byte order of the host machine is little_endian, byte-reverse
    * the numeric data in the header, since a SNDAN analysis file is stored
-   * in big-endian order by specification.                                  */ 
+   * in big-endian order by specification.                                  */
   if (byte_order() == little_endian)   /* zheng 10/29/97,rev. jjjm 02/08/98 */
   {
     /* swap the int & float bytes after reading them in */
@@ -95,7 +95,7 @@ void wdat(int fd, HEADER *head_data)
 
   /* If the byte order of the host machine is little_endian, byte-reverse
    * the numeric data before writing to the header, since a SNDAN analysis
-   * file is stored in big-endian order by specification.              */ 
+   * file is stored in big-endian order by specification.              */
   byte_reverse = (byte_order() == little_endian);           /* jjjm 02/08/98 */
 
   if (byte_reverse)					    /* jwb 08/12/94 */
@@ -137,9 +137,9 @@ void wdat(int fd, HEADER *head_data)
 
 } /*  end function wdat()  */
 
-/******************************************** 
- ** function to acquire string from a file ** 
- ** -->returns pointer to allocated buffer ** 
+/********************************************
+ ** function to acquire string from a file **
+ ** -->returns pointer to allocated buffer **
  ********************************************/
 char *gstring(fd) int fd;
 {
@@ -162,4 +162,3 @@ char *gstring(fd) int fd;
 } /* end of function gstring */
 
 /********************** END OF FILE header.c *********************************/
-

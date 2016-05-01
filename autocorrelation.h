@@ -10,6 +10,6 @@
 #include <math.h>
 
 
-double pitch_detect(int * frame, int length, int samplerate);
+float pitch_detect(int * frame, int length, int samplerate);
 
 #endif /* _AUTOCORRELATION_H */
