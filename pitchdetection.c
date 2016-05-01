@@ -100,7 +100,7 @@ int main(int argc, char **argv){
 
     /* Create file/get file descriptor for output .ff file */
     //FILE * ffoutput = fopen("output.ff", "w+");
-    char file[] = "file.ff";
+    char file[] = "output.ff";
 
     /* Fill in header */
     HEADER temp_header;
