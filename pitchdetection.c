@@ -12,8 +12,8 @@
 //Change this to 1 to enable debugging features
 #define DEBUG 0
 
-//Frame size (Currently set to 30ms)
-#define FRAMESIZE 0.030
+//Frame size (Currently set to 15ms)
+#define FRAMESIZE 0.015
 
 int main(int argc, char **argv){
 
