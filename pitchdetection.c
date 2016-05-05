@@ -12,8 +12,8 @@
 //Change this to 1 to enable debugging features
 #define DEBUG 0
 
-//Frame size (Currently set to 6ms)
-#define FRAMESIZE 0.006
+//Frame size (Currently set to 30ms)
+#define FRAMESIZE 0.030
 
 int main(int argc, char **argv){
 
@@ -108,18 +108,15 @@ int main(int argc, char **argv){
             length = remaining_samples;
         }
         pitches[i] = (float)pitch_detect(&(buf[framesize*i]), length, samplerate);
-        //printf("%f\n", pitches[i]);
-        // write(outputfd, &pitches[i], sizeof(float));
 
         remaining_samples -= length;
     }
     printf("Analysis Completed\n");
-    // fclose(ffoutput);
 
 
     /* If debugging is enabled, write output file with list of all frequencies*/
     #if DEBUG
-    printf("\r------ Creating debug file pitch_output.out ------\n");
+    printf("------ Creating debug file pitch_output.out ------\n");
     FILE * pitch_output;
     pitch_output = fopen("pitch_output.out","w+");
     for (i = 0; i < numframes; i ++){
@@ -177,6 +174,8 @@ int main(int argc, char **argv){
     temp_header.nchans = 1;        /* number of channels recorded              */
     temp_header.npts = numframes;          /* number of analysis blocks                */
 
+    printf("------ Writing Output File: %s ------\n", argv[2]);
+
     int fd = creat(file,0644);
     wdat(fd, &temp_header);
 
@@ -185,13 +184,16 @@ int main(int argc, char **argv){
         if(byte_reverse){
             byteswap4((int*)pitches+i);
         }
-        write(fd, &pitches[i], sizeof(float));
+        if(write(fd, &pitches[i], sizeof(float)) < sizeof(float)){
+            printf("Write error, ending program. \n");
+            exit(1);
+        }
     }
     close(fd);
 
+    printf("Write Completed\n");
 
     /* Free memory */
-
     free(buf);
     free(pitches);
 
