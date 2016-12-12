@@ -107,7 +107,7 @@ int main(int argc, char **argv){
         if(remaining_samples < framesize){
             length = remaining_samples;
         }
-        pitches[i] = (float)pitch_detect(&(buf[framesize*i]), length, samplerate);
+        pitches[i] = (float)pitch_detect(&(buf[(int)(framesize*i)]), length, samplerate);
 
         remaining_samples -= length;
     }

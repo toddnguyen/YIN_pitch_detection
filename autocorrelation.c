@@ -2,6 +2,8 @@
 
 #define TRESHOLD 0.1
 
+#include <limits.h>
+
 
 float pitch_detect(int * frame, int length, int samplerate){
 
@@ -33,11 +35,23 @@ float pitch_detect(int * frame, int length, int samplerate){
     float * difference = (float *) malloc(length*sizeof(float));
     memset(difference, 0, length*sizeof(float));
 
+    int highest = INT_MIN;
+    int lowest = INT_MAX;
+
     for(t = 0; t<length; t++){
+        if(frame[t] > highest){
+            highest = frame[t];
+        }
+
+        if(frame[t] < lowest){
+            lowest = frame[t];
+        }
+
         for(j = 1; j < W+1; j++){
             difference[t] += pow(((float)frame[j]-frame[j+t]),2);
         }
     }
+
 
 
     /** Step 3: Cumulative Normalized Difference Mean **/
@@ -75,6 +89,18 @@ float pitch_detect(int * frame, int length, int samplerate){
         }
     }
 
+    //If minima is still W with threshold, find aboslute minima under greater threshold.
+    if(minima == W){
+        int minimum = INT_MAX;
+
+        for(i = 1; i < W-1; i++){
+            if(cmndifference[i] <= minimum && cmndifference[i] <= fmin(cmndifference[i-1], cmndifference[i+1]) && cmndifference[i] <= 0.25){
+                minima = i;
+                minimum = cmndifference[i];
+            }
+        }
+    }
+
 
     /** Free memory from buffers **/
     // free(acf);
@@ -82,11 +108,14 @@ float pitch_detect(int * frame, int length, int samplerate){
     free(cmndifference);
 
 
-    //If minima is still W, no suitable minima was found. Return 0.
+
     if(minima == W){
         return 0;
     }
 
+    // if((highest - lowest) < 70000000){
+    //     return 0;
+    // }
 
     /** Return frequency **/
     return (float)samplerate/minima;
